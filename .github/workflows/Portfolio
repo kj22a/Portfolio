@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Portfolio</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: black;
+            color: white;
+        }
+        canvas {
+            display: block;
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        #info h2 {
+            margin: 0 0 5px;
+            font-size: 18px;
+        }
+        .project-popup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            color: black;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 200;
+            text-align: center;
+            width: 60%;
+            max-width: 600px;
+        }
+        .project-popup h3 {
+            margin-top: 0;
+            font-size: 24px;
+        }
+        .project-popup button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .project-popup button:hover {
+            background-color: #2c81ba;
+        }
+        #startPopup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            color: black;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 300;
+            text-align: center;
+            width: 60%;
+            max-width: 600px;
+        }
+        #startPopup h1 {
+            font-size: 28px;
+        }
+        #startPopup p {
+            font-size: 16px;
+        }
+        #startPopup button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        #startPopup button:hover {
+            background-color: #2c81ba;
+        }
+   	#downloadCV {
+     	   margin-top: 10px;
+       	   padding: 10px 20px;
+           background-color: #3498db;
+           color: white;
+           border: none;
+           border-radius: 5px;
+           cursor: pointer;
+           font-size: 14px;
+        }
+
+       #downloadCV:hover {
+           background-color: #2c81ba;
+        }
+    </style>
+</head>
+<body>
+<div id="startPopup">
+    <h1>Welcome to My Interactive Portfolio!</h1>
+    <p>Hi, I’m Karujan, and I recently graduated with a degree in Engineering from the University of Cambridge. I’m passionate about Statistics, Mathematics and Machine learning and eager to apply the skills I’ve learned throughout my academic journey to real-world challenges.</p>
+    <p>I’ve gained technical expertise in mathematical modelling, problem-solving and programming during my studies. I’m particularly excited about working with big data.</p>
+    <p>I’m motivated by the opportunity to learn and grow, especially in a dynamic environment where I can collaborate with others and contribute to meaningful projects. I’m always looking to expand my knowledge and take on new challenges that push my boundaries.</p>
+    <p>I’m thrilled about joining a forward-thinking team and look forward to the opportunity to contribute and make an impact.</p>
+    <p>Explore my projects in a fun and interactive way. Use the arrow keys to move the spaceship. Collide with a falling block to view project details!</p>
+    <button onclick="startGame()">Start Game</button>
+</div>
+<div id="info">
+    <h2>Interactive Portfolio</h2>
+    <p>Use the arrow keys to move the spaceship. Collide with a falling block to view project details!</p>
+    <button id="downloadCV" onclick="downloadCV()">Download CV</button>
+<script>
+    function downloadCV() {
+        // Replace 'path/to/your-cv.pdf' with the actual path to your PDF file
+        window.open('path/to/your-cv.pdf', '_blank');
+    }
+</script>
+</div>
+<canvas id="gameCanvas"></canvas>
+<div class="project-popup" id="projectPopup">
+    <h3 id="popupTitle">Project Title</h3>
+    <p id="popupDescription">Project Description</p>
+    <button onclick="closePopup()">Close</button>
+</div>
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Resize canvas to fit window
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let gameStarted = false;
+    let gamePaused = false;
+
+    function startGame() {
+        document.getElementById('startPopup').style.display = 'none';
+        gameStarted = true;
+        gamePaused = false; // Resume game
+        animate();
+    }
+
+    // Stars and comet
+    const stars = Array.from({ length: 150 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 2 + 0.5,
+        alpha: Math.random(),
+        z: Math.random() * 3 + 1
+    }));
+
+    let comet = { x: -100, y: Math.random() * canvas.height, speedX: 4, speedY: 1.5 };
+
+    // Game elements
+    const player = {
+        x: canvas.width / 2 - 25,
+        y: canvas.height - 70,
+        width: 50,
+        height: 70,
+        color: '#ffcc00',
+        speed: 5
+    };
+
+    const blocks = [];
+    const blockWidth = 100;
+    const blockHeight = 50;
+    const blockSpeed = 2;
+
+    const projects = [
+        { name: 'Diabetes', description: 'The Diabetes project involved developing an advanced machine learning model to predict diabetes using key health indicators such as BMI, glucose levels, and age. The project included comprehensive data preprocessing, addressing missing values, handling outliers, and ensuring normalisation to maintain consistency and reliability. Feature engineering was conducted using robust statistical techniques like Q-Q plots, Kruskal-Wallis tests, and Spearman rank correlation, enabling the identification of impactful features. Visualisation played a significant role, with intuitive charts created to depict feature dependencies and distributions, enhancing interpretability. The model development leveraged a Voting Classifier comprising five stacked models, utilising bagging techniques to ensure robust and diverse predictions. Performance was rigorously evaluated using accuracy and F1 score metrics to guarantee reliable outcomes. Finally, the model was deployed locally via Flask, providing a seamless and user-friendly interface built with HTML and CSS for easy interaction and accessibility.', link: 'https://github.com/kj22a/Diabetes_Predictor', color: '#e74c3c' },
+        { name: 'Door dash', description: 'This project involved working with a large dataset of approximately 200,000 rows, utilising statistical tests and datetime manipulation to prepare the data for analysis. The DBSCAN algorithm was implemented to effectively identify and remove outliers, ensuring data quality. Interactive three-dimensional visualisations were created using the Plotly library in Python, providing insightful representations of the data. A neural network was developed using TensorFlow, with its performance evaluated through an epoch-loss graph. The model was further optimised by adjusting hyperparameters and generating 10 different models for comparative evaluation. Finally, the deep learning model’s performance was assessed against a Random Forest Regressor, using mean absolute error as the evaluation metric to ensure robust and accurate predictions.', link: 'https://github.com/kj22a/Diabetes_Predictor', color: '#3498db' },
+        { name: 'Loans', description: 'This project focused on constructing a loan approval model utilizing 12 key features, including marital status and credit score, to predict loan outcomes effectively. Rigorous statistical tests such as Chi-squared, Mann-Whitney-U, and Kolmogorov-Smirnov were conducted to select the most impactful features, ensuring model reliability. Dependencies between features and loan status were visualized through comprehensive charts and graphs, enhancing interpretability. A Stacked Classifier integrating seven models was employed, with Singular Value Decomposition applied for dimensionality reduction and hyperparameter optimization achieved using advanced techniques like gradient descent, grid search, and Bayesian methods. The model performance was thoroughly evaluated using F1 score, confusion matrix, accuracy, ROC curve, and AUC metrics, ensuring robust and accurate predictions.', link:'https://github.com/kj22a/Loan-Prediction', color: '#2ecc71' }
+    ];
+
+     let score = 0;
+
+    // Create falling blocks
+    function spawnBlock() {
+        if (!gamePaused) {
+            const project = projects[Math.floor(Math.random() * projects.length)];
+            blocks.push({
+                x: Math.random() * (canvas.width - blockWidth),
+                y: -blockHeight,
+                width: blockWidth,
+                height: blockHeight,
+                color: project.color,
+                project: project
+            });
+        }
+    }
+
+    setInterval(spawnBlock, 2000); // Reduce the spawn rate
+
+    // Player movement
+    let keys = {};
+    window.addEventListener('keydown', (e) => (keys[e.key] = true));
+    window.addEventListener('keyup', (e) => (keys[e.key] = false));
+
+    function movePlayer() {
+        if (keys['ArrowLeft'] && player.x > 0) {
+            player.x -= player.speed;
+        }
+        if (keys['ArrowRight'] && player.x + player.width < canvas.width) {
+            player.x += player.speed;
+        }
+    }
+
+    // Collision detection
+    function isColliding(rect1, rect2) {
+        return (
+            rect1.x < rect2.x + rect2.width &&
+            rect1.x + rect1.width > rect2.x &&
+            rect1.y < rect2.y + rect2.height &&
+            rect1.y + rect1.height > rect2.y
+        );
+    }
+
+    function showProjectDetails(project) {
+        const popup = document.getElementById('projectPopup');
+        const title = document.getElementById('popupTitle');
+        const description = document.getElementById('popupDescription');
+
+        title.textContent = project.name;
+        description.textContent = project.description;
+	description.innerHTML = `
+        ${project.description}
+        ${project.link ? `<br><br><a href="${project.link}" target="_blank" style="color: #3498db; text-decoration: none;">View on GitHub</a>` : ''}
+ 	`;
+
+        popup.style.display = 'block';
+
+        gamePaused = true; // Pause game
+    }
+
+    function closePopup() {
+        const popup = document.getElementById('projectPopup');
+        popup.style.display = 'none';
+        gamePaused = false; // Resume game
+    }
+
+    // Update game
+    function update() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw stars
+        stars.forEach(star => {
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+            ctx.fill();
+            ctx.closePath();
+            
+            // Make stars twinkle and Move stars based on their z-depth
+        star.y += 0.5 / star.z;
+        if (star.y > canvas.height) {
+            star.y = -star.radius;
+            star.x = Math.random() * canvas.width;
+        }
+    });
+
+    // Draw comet
+    ctx.beginPath();
+    const gradient = ctx.createRadialGradient(comet.x, comet.y, 5, comet.x, comet.y, 30);
+    gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    ctx.fillStyle = gradient;
+    ctx.arc(comet.x, comet.y, 30, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.closePath();
+
+    comet.x += comet.speedX;
+    comet.y += comet.speedY;
+
+    // Reset comet when out of view
+    if (comet.x > canvas.width + 100 || comet.y > canvas.height + 100) {
+        comet.x = -100;
+        comet.y = Math.random() * canvas.height;
+    }
+
+    // Draw player spaceship
+    ctx.fillStyle = player.color;
+    ctx.beginPath();
+    ctx.moveTo(player.x + player.width / 2, player.y);
+    ctx.lineTo(player.x, player.y + player.height);
+    ctx.lineTo(player.x + player.width, player.y + player.height);
+    ctx.closePath();
+    ctx.fill();
+
+    movePlayer();
+
+    // Draw and update blocks
+    blocks.forEach((block, index) => {
+        block.y += blockSpeed;
+        ctx.fillStyle = block.color;
+        ctx.fillRect(block.x, block.y, block.width, block.height);
+
+        ctx.fillStyle = 'white';
+        ctx.font = '16px Poppins';
+        ctx.textAlign = 'center';
+        ctx.fillText(block.project.name, block.x + block.width / 2, block.y + block.height / 2 + 5);
+
+        // Check collision with player
+        if (isColliding(player, block)) {
+            blocks.splice(index, 1); // Remove block
+            showProjectDetails(block.project);
+        }
+
+        // Remove blocks that fall off screen
+        if (block.y > canvas.height) {
+            blocks.splice(index, 1);
+        }
+    });
+}
+
+// Animate game
+function animate() {
+    if (!gameStarted) return;
+    update();
+    requestAnimationFrame(animate);
+}
+
+// Handle window resize
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+
+// Initial star drawing
+update();
+
+
+		
+
+</script>
+</body>
+</html>
