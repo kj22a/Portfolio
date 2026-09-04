@@ -1,362 +1,1168 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Portfolio</title>
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background: black;
-            color: white;
-        }
-        canvas {
-            display: block;
-        }
-        #info {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            z-index: 100;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        #info h2 {
-            margin: 0 0 5px;
-            font-size: 18px;
-        }
-        .project-popup {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.9);
-            color: black;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-            display: none;
-            z-index: 200;
-            text-align: center;
-            width: 60%;
-            max-width: 600px;
-        }
-        .project-popup h3 {
-            margin-top: 0;
-            font-size: 24px;
-        }
-        .project-popup button {
-            margin-top: 20px;
-            padding: 12px 20px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .project-popup button:hover {
-            background-color: #2c81ba;
-        }
-        #startPopup {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.95);
-            color: black;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            z-index: 300;
-            text-align: center;
-            width: 60%;
-            max-width: 600px;
-        }
-        #startPopup h1 {
-            font-size: 28px;
-        }
-        #startPopup p {
-            font-size: 16px;
-        }
-        #startPopup button {
-            margin-top: 20px;
-            padding: 12px 20px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 18px;
-        }
-        #startPopup button:hover {
-            background-color: #2c81ba;
-        }
-	    }
-   	#downloadCV {
-     	   margin-top: 10px;
-       	   padding: 10px 20px;
-           background-color: #0314fc;
-           color: white;
-           border: none;
-           border-radius: 5px;
-           cursor: pointer;
-           font-size: 14px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karujan Jeyaseelan — Slot Maths Portfolio</title>
+<!--
+  ============================================================================
+  TODO BEFORE PUBLISHING  (search for "TODO" — there are 4)
+    1. CV_URL below — point it at whichever CV variant you want public.
+    2. projects.cricket.link   — add the GitHub repo URL
+    3. projects.surge.link     — add the GitHub repo URL
+    4. projects.slotmath.link  — add the GitHub repo URL
+  Until a link is filled in, the card shows "Repo coming soon" instead of a
+  dead link. Nothing else needs changing.
+  ============================================================================
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06080e; --bg2:#0a0e18; --panel:#0e1421; --panel2:#131b2b;
+  --line:#1e2739; --line2:#2a3752;
+  --text:#e8eef8; --muted:#8496b0; --dim:#5b6b85;
+  --gold:#f0b429; --cyan:#22d3ee; --green:#34d399; --magenta:#d946ef; --red:#f87171;
+  --premium:#f0b429; --mid:#22d3ee; --low:#8496b0; --wild:#d946ef; --scatter:#34d399;
+  --cell:78px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1100px 620px at 12% -8%, #14204010, transparent 60%),
+    radial-gradient(900px 520px at 92% 0%, #2a103a12, transparent 55%),
+    var(--bg);
+  color:var(--text);
+  font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  font-size:14px; line-height:1.55;
+  min-height:100vh;
+}
+h1,h2,h3,.disp{font-family:'Space Grotesk','Inter',system-ui,sans-serif;letter-spacing:-.01em}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
+a{color:var(--cyan)}
 
-       #downloadCV:hover {
-           background-color: #03fc24;
-        }
-    </style>
+/* ---------- shell ---------- */
+.wrap{max-width:1280px;margin:0 auto;padding:0 20px 60px}
+.topbar{
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  padding:18px 0 16px;border-bottom:1px solid var(--line);margin-bottom:22px;
+}
+.brand{display:flex;flex-direction:column;gap:2px;margin-right:auto}
+.brand h1{margin:0;font-size:19px;font-weight:700}
+.brand p{margin:0;font-size:12.5px;color:var(--muted)}
+.navbtn{
+  padding:8px 14px;border:1px solid var(--line2);border-radius:8px;
+  background:var(--panel);font-size:13px;font-weight:500;color:var(--text);
+  transition:.15s border-color,.15s background,.15s transform;
+}
+.navbtn:hover{border-color:var(--cyan);background:var(--panel2)}
+.navbtn:active{transform:translateY(1px)}
+.navbtn.primary{border-color:#8a6a1a;background:linear-gradient(180deg,#3a2c0c,#241c08);color:var(--gold)}
+.navbtn.primary:hover{border-color:var(--gold)}
+
+/* ---------- layout ---------- */
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 336px;gap:22px;align-items:start}
+.machine-col{display:flex;flex-direction:column;gap:14px;min-width:0}
+@media(max-width:1080px){.stage{grid-template-columns:1fr}}
+
+/* ---------- machine ---------- */
+.machine{
+  background:linear-gradient(180deg,var(--panel),#0a0f1a);
+  border:1px solid var(--line2);border-radius:16px;padding:18px;
+  box-shadow:0 24px 60px -30px #000, inset 0 1px 0 #ffffff08;
+}
+.machine-head{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.machine-head h2{margin:0;font-size:15px;font-weight:600}
+.machine-head .spec{font-size:12px;color:var(--dim)}
+.reels{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:7px;
+  background:#05070c;border:1px solid var(--line);border-radius:12px;padding:7px;
+  position:relative;overflow:hidden;
+}
+.reel{height:calc(var(--cell)*3);overflow:hidden;border-radius:8px;background:#080b13;position:relative}
+.strip{display:flex;flex-direction:column;will-change:transform}
+.cellwrap{height:var(--cell);padding:3px}
+.cell{
+  height:100%;border-radius:7px;background:linear-gradient(180deg,#141c2c,#0d1422);
+  border:1px solid #1b2435;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;position:relative;overflow:hidden;
+}
+.cell svg{width:30px;height:30px;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.cell .lab{font-size:8.5px;letter-spacing:.09em;font-weight:600;color:var(--dim);text-transform:uppercase}
+.cell.t-premium{border-color:#4a3a12}.cell.t-premium svg{stroke:var(--premium)}.cell.t-premium .lab{color:#a9843a}
+.cell.t-mid{border-color:#154451}.cell.t-mid svg{stroke:var(--mid)}.cell.t-mid .lab{color:#3f8fa3}
+.cell.t-low{border-color:#252f40}.cell.t-low svg{stroke:var(--low)}
+.cell.t-wild{border-color:#5a1c67;background:linear-gradient(180deg,#2a1030,#160a1c)}.cell.t-wild svg{stroke:var(--wild)}.cell.t-wild .lab{color:#b06ec4}
+.cell.t-scatter{border-color:#14543a;background:linear-gradient(180deg,#0d2b20,#081a14)}.cell.t-scatter svg{stroke:var(--scatter)}.cell.t-scatter .lab{color:#3f9e79}
+.cell.win{animation:pop .55s ease-out;border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 0 22px -4px var(--gold)}
+@keyframes pop{0%{transform:scale(1)}35%{transform:scale(1.09)}100%{transform:scale(1)}}
+.reel.spinning .strip{filter:blur(1.4px)}
+#lineCanvas{position:absolute;inset:7px;pointer-events:none;z-index:5}
+
+/* win banner */
+.winbar{
+  margin-top:12px;height:42px;border-radius:9px;border:1px solid var(--line);
+  background:#080c14;display:flex;align-items:center;justify-content:center;
+  gap:10px;font-size:14px;color:var(--dim);transition:.2s;
+}
+.winbar.on{border-color:var(--gold);background:linear-gradient(90deg,#1a1305,#241a07,#1a1305);color:var(--gold);font-weight:600}
+.winbar .amt{font-size:17px;font-weight:700}
+
+/* controls */
+.controls{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap}
+.spin{
+  flex:1;min-width:150px;padding:14px 20px;border-radius:10px;font-weight:700;font-size:15px;
+  background:linear-gradient(180deg,#f6c445,#d99a12);color:#1a1200;
+  box-shadow:0 8px 22px -10px #f0b42999;transition:.15s;
+}
+.spin:hover:not(:disabled){filter:brightness(1.08)}
+.spin:active:not(:disabled){transform:translateY(1px)}
+.spin:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.ctlbtn{padding:12px 15px;border:1px solid var(--line2);border-radius:9px;background:var(--panel2);font-size:13px;font-weight:500;transition:.15s}
+.ctlbtn:hover:not(:disabled){border-color:var(--cyan)}
+.ctlbtn:disabled{opacity:.4;cursor:not-allowed}
+.ctlbtn.on{border-color:var(--green);color:var(--green)}
+.bal{margin-left:auto;text-align:right;font-size:12px;color:var(--muted)}
+.bal b{display:block;font-size:19px;color:var(--text);font-weight:700}
+
+/* paytable strip */
+.paystrip{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:6px;margin-top:15px;padding-top:14px;border-top:1px solid var(--line)}
+.pitem{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:8px;background:#0a0f1a;border:1px solid var(--line);text-align:left;transition:.15s}
+button.pitem:hover{border-color:var(--cyan);transform:translateY(-1px)}
+.pitem svg{width:18px;height:18px;flex:none;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pitem b{display:block;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.25}
+.pitem span{display:block;font-size:8.5px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
+.pitem.s-premium svg{stroke:var(--premium)} .pitem.s-mid svg{stroke:var(--mid)}
+.pitem.s-low svg{stroke:var(--low)} .pitem.s-wild svg{stroke:var(--wild)} .pitem.s-scatter svg{stroke:var(--scatter)}
+@media(max-width:620px){:root{--cell:64px}}
+
+/* ---------- side panel ---------- */
+.side{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px}
+.card h3{margin:0 0 12px;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.rtpgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:13px}
+.rtpbox{background:#080c14;border:1px solid var(--line);border-radius:10px;padding:11px 12px}
+.rtpbox .k{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);margin-bottom:3px}
+.rtpbox .v{font-size:22px;font-weight:700;line-height:1.1}
+.rtpbox.theo{border-color:#4a3a12}.rtpbox.theo .v{color:var(--gold)}
+.rtpbox.act{border-color:#154451}.rtpbox.act .v{color:var(--cyan)}
+.rtpbox .sub{font-size:10.5px;color:var(--dim);margin-top:3px}
+.stats{display:grid;grid-template-columns:1fr auto;gap:5px 12px;font-size:12.5px}
+.stats .k{color:var(--muted)}
+.stats .v{text-align:right;font-weight:600}
+#chart{width:100%;height:130px;display:block;margin-top:6px;border-radius:8px;background:#080c14;border:1px solid var(--line)}
+.chartnote{font-size:10.5px;color:var(--dim);margin-top:7px;line-height:1.5}
+
+/* discovery */
+.disc-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px}
+.disc-head .n{font-size:13px;font-weight:700}
+.bar{height:5px;border-radius:3px;background:#0c1220;overflow:hidden;margin-bottom:11px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));transition:width .5s ease}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{
+  display:flex;align-items:center;gap:5px;padding:4px 8px;border-radius:7px;
+  border:1px solid var(--line);background:#0a0f1a;font-size:11px;color:var(--dim);
+  transition:.15s;cursor:pointer;
+}
+.chip svg{width:13px;height:13px;fill:none;stroke-width:1.9;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}
+.chip.found{color:var(--text);border-color:var(--line2);background:var(--panel2)}
+.chip.found:hover{border-color:var(--cyan)}
+.chip.locked{opacity:.5}
+
+/* ---------- overlays ---------- */
+.overlay{
+  position:fixed;inset:0;z-index:200;background:#04060ad9;backdrop-filter:blur(7px);
+  display:none;align-items:flex-start;justify-content:center;padding:34px 18px;overflow-y:auto;
+}
+.overlay.open{display:flex;animation:fade .2s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet{
+  width:100%;max-width:900px;background:var(--panel);border:1px solid var(--line2);
+  border-radius:16px;padding:26px;animation:rise .26s cubic-bezier(.2,.9,.3,1);
+  box-shadow:0 40px 90px -40px #000;
+}
+.sheet.wide{max-width:1120px}
+@keyframes rise{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
+.sheet-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
+.sheet-head h2{margin:0;font-size:21px}
+.sheet-head p{margin:4px 0 0;font-size:13px;color:var(--muted)}
+.x{margin-left:auto;width:32px;height:32px;border-radius:8px;border:1px solid var(--line2);background:var(--panel2);font-size:17px;line-height:1;flex:none}
+.x:hover{border-color:var(--red);color:var(--red)}
+
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{padding:7px 9px;text-align:right;border-bottom:1px solid var(--line)}
+th{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);font-weight:600}
+th:first-child,td:first-child{text-align:left}
+tbody tr:hover{background:#ffffff05}
+td.sym{display:flex;align-items:center;gap:8px}
+td.sym svg{width:17px;height:17px;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bars{position:relative;background:#0a0f1a;border-radius:3px;height:5px;min-width:56px}
+.bars i{position:absolute;inset:0 auto 0 0;background:var(--cyan);border-radius:3px}
+
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media(max-width:840px){.mgrid{grid-template-columns:1fr}}
+.msec{margin-bottom:20px}
+.msec h4{margin:0 0 9px;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.note{font-size:12.5px;color:var(--muted);line-height:1.65}
+.note code,.formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.formula{
+  display:block;background:#080c14;border:1px solid var(--line);border-left:2px solid var(--gold);
+  border-radius:0 8px 8px 0;padding:11px 13px;font-size:11.5px;color:#c8d6ea;
+  margin:9px 0;white-space:pre-wrap;line-height:1.7;overflow-x:auto;
+}
+.kv{display:grid;grid-template-columns:1fr auto;gap:4px 14px;font-size:12.5px;margin-top:4px}
+.kv .k{color:var(--muted)}
+.kv .v{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+
+/* projects grid */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:13px}
+.pcard{
+  text-align:left;background:#0a0f1a;border:1px solid var(--line);border-radius:12px;
+  padding:15px;transition:.16s;position:relative;overflow:hidden;
+}
+.pcard:hover{border-color:var(--cyan);transform:translateY(-2px)}
+.pcard::before{content:'';position:absolute;inset:0 auto 0 0;width:3px;background:var(--c)}
+.pcard .ic{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.pcard .ic svg{width:21px;height:21px;fill:none;stroke:var(--c);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pcard h4{margin:0;font-size:14px;font-weight:600}
+.pcard p{margin:0;font-size:12px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.pcard .tag{margin-top:9px;display:inline-block;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+
+.pbody{font-size:13.5px;line-height:1.72;color:#cfdcec}
+.pbody p{margin:0 0 12px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.tag2{font-size:11px;padding:3px 9px;border-radius:6px;border:1px solid var(--line2);background:var(--panel2);color:var(--muted)}
+.golink{display:inline-flex;align-items:center;gap:7px;margin-top:6px;padding:9px 15px;border-radius:9px;border:1px solid var(--line2);background:var(--panel2);font-size:13px;font-weight:500;text-decoration:none;color:var(--text)}
+.golink:hover{border-color:var(--cyan);color:var(--cyan)}
+.golink.dead{opacity:.5;cursor:default;pointer-events:none}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(120%);z-index:400;transition:transform .35s cubic-bezier(.2,.9,.3,1)}
+#toast.show{transform:translateX(-50%) translateY(0)}
+.toast-in{display:flex;align-items:center;gap:11px;background:var(--panel2);border:1px solid var(--gold);border-radius:11px;padding:11px 17px;box-shadow:0 18px 44px -20px #000}
+.toast-in svg{width:20px;height:20px;fill:none;stroke:var(--gold);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.toast-in b{display:block;font-size:13px}
+.toast-in span{font-size:11.5px;color:var(--muted)}
+
+footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);font-size:11.5px;color:var(--dim);display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+footer .sep{flex:1}
+</style>
 </head>
 <body>
-<div id="startPopup">
-    <h1>Welcome to My Interactive Portfolio!</h1>
-    <p>Hi, I’m Karujan, and I recently graduated with a degree in Engineering from the University of Cambridge. I’m passionate about Statistics, Mathematics and Machine learning and eager to apply the skills I’ve learned throughout my academic journey to real-world challenges.</p>
-    <p>I’ve gained technical expertise in mathematical modelling, problem-solving and programming during my studies. I’m particularly excited about working with big data.</p>
-    <p>I’m motivated by the opportunity to learn and grow, especially in a dynamic environment where I can collaborate with others and contribute to meaningful projects. I’m always looking to expand my knowledge and take on new challenges that push my boundaries.</p>
-    <p>I’m thrilled about joining a forward-thinking team and look forward to the opportunity to contribute and make an impact.</p>
-    <p>Explore my projects in a fun and interactive way. Use the arrow keys to move the spaceship. Collide with a falling block to view project details!</p>
-    <button onclick="startGame()">Start Game</button>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">
+      <h1>Karujan Jeyaseelan</h1>
+      <p>Software engineer at Fullpush · Cambridge engineering · probabilistic modelling &amp; simulation</p>
+    </div>
+    <button class="navbtn" id="btnMath">The Maths</button>
+    <button class="navbtn" id="btnProjects">All Projects</button>
+    <button class="navbtn" id="btnAbout">About</button>
+    <a class="navbtn primary" id="btnCV" href="#" target="_blank" rel="noopener">Download CV</a>
+  </div>
+
+  <div class="stage">
+
+    <!-- ================= MACHINE ================= -->
+    <div class="machine-col">
+    <div class="machine">
+      <div class="machine-head">
+        <h2>Portfolio Slot</h2>
+        <span class="spec" id="specLine">5 reels · 3 rows · 20 fixed paylines · 20 credits per spin</span>
+      </div>
+
+      <div class="reels" id="reels">
+        <canvas id="lineCanvas"></canvas>
+      </div>
+
+      <div class="winbar" id="winbar">Land 3+ matching symbols from the left to unlock a project</div>
+
+      <div class="controls">
+        <button class="spin" id="spinBtn">SPIN</button>
+        <button class="ctlbtn" id="autoBtn">Auto ×50</button>
+        <button class="ctlbtn" id="simBtn">Simulate 1,000,000</button>
+        <div class="bal">
+          Credits<b class="num" id="balance">5,000</b>
+        </div>
+      </div>
+
+      <div class="paystrip" id="paystrip"></div>
+    </div>
+
+      <div class="card">
+        <div class="disc-head">
+          <h3 style="margin:0">Projects discovered</h3>
+          <span class="n num" id="discN">0 / 11</span>
+        </div>
+        <div class="bar"><i id="discBar" style="width:0%"></i></div>
+        <div class="chips" id="chips"></div>
+      </div>
+    </div>
+
+    <!-- ================= SIDE ================= -->
+    <div class="side">
+
+      <div class="card">
+        <h3>Live return to player</h3>
+        <div class="rtpgrid">
+          <div class="rtpbox theo">
+            <div class="k">Theoretical</div>
+            <div class="v num" id="theoRTP">—</div>
+            <div class="sub">closed form</div>
+          </div>
+          <div class="rtpbox act">
+            <div class="k">Simulated</div>
+            <div class="v num" id="actRTP">—</div>
+            <div class="sub num" id="rtpDelta">0 spins</div>
+          </div>
+        </div>
+        <canvas id="chart"></canvas>
+        <div class="chartnote">
+          Cyan is measured RTP, gold is the exact value. The shaded funnel is
+          ±2 standard errors, narrowing as 1/&radic;n — the measured line should
+          stay inside it. Log scale.
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Session statistics</h3>
+        <div class="stats">
+          <div class="k">Spins</div><div class="v num" id="sSpins">0</div>
+          <div class="k">Wagered</div><div class="v num" id="sWag">0</div>
+          <div class="k">Returned</div><div class="v num" id="sRet">0</div>
+          <div class="k">Hit frequency</div><div class="v num" id="sHit">—</div>
+          <div class="k">Volatility (σ)</div><div class="v num" id="sVol">—</div>
+          <div class="k">Best win</div><div class="v num" id="sMax">—</div>
+        </div>
+        <div class="chartnote">Simulated spins count towards these statistics but never towards
+        credits — a simulation is a measurement, not a session.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <span>Play credits only. No wagering, no real money — this is a mathematics demonstration.</span>
+    <span class="sep"></span>
+    <span id="buildNote"></span>
+  </footer>
 </div>
-<div id="info">
-    <h2>Interactive Portfolio</h2>
-    <p>Use the arrow keys to move the spaceship. Collide with a falling block to view project details!</p>
-    <button id="downloadCV" onclick="downloadCV()">Download CV</button>
+
+<!-- ================= OVERLAYS ================= -->
+<div class="overlay" id="ovMath"><div class="sheet wide">
+  <div class="sheet-head">
+    <div>
+      <h2>How this game is built</h2>
+      <p>Every number below is computed from the reel strips in closed form, then checked against simulation.</p>
+    </div>
+    <button class="x" data-close>&times;</button>
+  </div>
+  <div id="mathBody"></div>
+</div></div>
+
+<div class="overlay" id="ovProjects"><div class="sheet wide">
+  <div class="sheet-head">
+    <div><h2>All projects</h2><p>Eleven projects. You can also unlock them by landing their symbol.</p></div>
+    <button class="x" data-close>&times;</button>
+  </div>
+  <div class="pgrid" id="pgrid"></div>
+</div></div>
+
+<div class="overlay" id="ovProject"><div class="sheet">
+  <div class="sheet-head">
+    <div id="pHead"></div>
+    <button class="x" data-close>&times;</button>
+  </div>
+  <div id="pBody"></div>
+</div></div>
+
+<div class="overlay" id="ovAbout"><div class="sheet">
+  <div class="sheet-head">
+    <div><h2>About</h2><p>Karujan Jeyaseelan</p></div>
+    <button class="x" data-close>&times;</button>
+  </div>
+  <div class="pbody" id="aboutBody"></div>
+</div></div>
+
+<div id="toast"><div class="toast-in">
+  <span id="toastIcon"></span>
+  <div><b id="toastTitle"></b><span id="toastSub"></span></div>
+</div></div>
+
 <script>
-    function downloadCV() {
-        // Replace 'path/to/your-cv.pdf' with the actual path to your PDF file
-        window.open('https://github.com/kj22a/Portfolio/blob/main/CV_new.pdf', '_blank');
-    }
-</script>
-</div>
-<canvas id="gameCanvas"></canvas>
-<div class="project-popup" id="projectPopup">
-    <h3 id="popupTitle">Project Title</h3>
-    <p id="popupDescription">Project Description</p>
-    <button onclick="closePopup()">Close</button>
-</div>
-<script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
+/* ============================================================================
+   1. SLOT MATH CORE — exact model + Monte Carlo
+   ----------------------------------------------------------------------------
+   5 reels, 3 rows, 20 fixed paylines, bet = 20 credits (1 per line).
 
-    // Resize canvas to fit window
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+   Wilds appear on reels 2, 3 and 4 ONLY. That is a standard slot design
+   choice, and it also makes the combinatorics unambiguous: because reel 1
+   can never be wild, the symbol that a left-aligned run pays for is always
+   determined uniquely by reel 1. There is never a "which symbol should this
+   run of wilds pay as?" case to resolve, so the RTP below is exact rather
+   than an approximation.
+   ========================================================================== */
+const ROWS = 3, REELS = 5, LINES = 20, BET = LINES;
 
-    let gameStarted = false;
-    let gamePaused = false;
+const SYMS = [
+  { id:'CRK', name:'Cricket Trading Platform', tier:'premium' },
+  { id:'SRG', name:'BBL Surge Model',          tier:'premium' },
+  { id:'SLT', name:'Slot Math Engine',         tier:'premium' },
+  { id:'ROU', name:'Roulette Simulation',      tier:'mid' },
+  { id:'FX',  name:'GBP/USD Forecasting',      tier:'mid' },
+  { id:'LON', name:'Loan Approval Model',      tier:'mid' },
+  { id:'DIA', name:'Diabetes Predictor',       tier:'mid' },
+  { id:'DDH', name:'DoorDash Analysis',        tier:'low' },
+  { id:'ABT', name:'A/B Testing',              tier:'low' },
+  { id:'CLN', name:'Clinical Trial',           tier:'low' },
+  { id:'INS', name:'Medical Insurance',        tier:'low' },
+  { id:'WLD', name:'Wild',                     tier:'wild' },
+  { id:'SCT', name:'Scatter',                  tier:'scatter' },
+];
+const SYM = Object.fromEntries(SYMS.map(s => [s.id, s]));
+const PAYING = SYMS.filter(s => s.tier!=='wild' && s.tier!=='scatter').map(s => s.id);
 
-    function startGame() {
-        document.getElementById('startPopup').style.display = 'none';
-        gameStarted = true;
-        gamePaused = false; // Resume game
-        animate();
-    }
+const PAYS = {
+  CRK:{3:120,4:600,5:3000}, SRG:{3:75,4:350,5:1800}, SLT:{3:60,4:300,5:1500},
+  ROU:{3:35,4:150,5:600},   FX:{3:30,4:120,5:500},   LON:{3:25,4:90,5:350},
+  DIA:{3:25,4:90,5:350},    DDH:{3:15,4:60,5:240},   ABT:{3:15,4:60,5:240},
+  CLN:{3:12,4:45,5:180},    INS:{3:12,4:45,5:180},
+};
+const SCATTER_PAYS = { 3:2, 4:20, 5:200 };  // × total bet
 
-    // Stars and comet
-    const stars = Array.from({ length: 150 }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 2 + 0.5,
-        alpha: Math.random(),
-        z: Math.random() * 3 + 1
-    }));
+const STRIP_COUNTS = [
+  { CRK:2, SRG:2, SLT:3, ROU:4, FX:4, LON:4, DIA:4, DDH:6, ABT:6, CLN:5, INS:5,        SCT:2 },
+  { CRK:2, SRG:2, SLT:2, ROU:4, FX:4, LON:4, DIA:4, DDH:6, ABT:6, CLN:4, INS:4, WLD:3, SCT:2 },
+  { CRK:2, SRG:2, SLT:2, ROU:4, FX:4, LON:4, DIA:4, DDH:6, ABT:6, CLN:4, INS:4, WLD:3, SCT:2 },
+  { CRK:2, SRG:2, SLT:2, ROU:4, FX:4, LON:4, DIA:4, DDH:6, ABT:6, CLN:4, INS:4, WLD:3, SCT:2 },
+  { CRK:2, SRG:2, SLT:3, ROU:4, FX:4, LON:4, DIA:4, DDH:6, ABT:6, CLN:5, INS:5,        SCT:2 },
+];
 
-    let comet = { x: -100, y: Math.random() * canvas.height, speedX: 4, speedY: 1.5 };
-
-    // Game elements
-    const player = {
-        x: canvas.width / 2 - 25,
-        y: canvas.height - 70,
-        width: 50,
-        height: 70,
-        color: '#ffcc00',
-        speed: 5
-    };
-
-    const blocks = [];
-    const blockWidth = 100;
-    const blockHeight = 50;
-    const blockSpeed = 2;
-
-      const projects = [
-        { name: 'Diabetes', description: 'The Diabetes project involved developing an advanced machine learning model to predict diabetes using key health indicators such as BMI, glucose levels, and age. The project included comprehensive data preprocessing, addressing missing values, handling outliers, and ensuring normalisation to maintain consistency and reliability. Feature engineering was conducted using robust statistical techniques like Q-Q plots, Kruskal-Wallis tests, and Spearman rank correlation, enabling the identification of impactful features. Visualisation played a significant role, with intuitive charts created to depict feature dependencies and distributions, enhancing interpretability. The model development leveraged a Voting Classifier comprising five stacked models, utilising bagging techniques to ensure robust and diverse predictions. Performance was rigorously evaluated using accuracy and F1 score metrics to guarantee reliable outcomes. Finally, the model was deployed locally via Flask, providing a seamless and user-friendly interface built with HTML and CSS for easy interaction and accessibility.', link: 'https://github.com/kj22a/Diabetes_Predictor', color: '#2ecc71' },
-        { name: 'Door dash', description: 'This project involved working with a large dataset of approximately 200,000 rows, utilising statistical tests and datetime manipulation to prepare the data for analysis. The DBSCAN algorithm was implemented to effectively identify and remove outliers, ensuring data quality. Interactive three-dimensional visualisations were created using the Plotly library in Python, providing insightful representations of the data. A neural network was developed using TensorFlow, with its performance evaluated through an epoch-loss graph. The model was further optimised by adjusting hyperparameters and generating 10 different models for comparative evaluation. Finally, the deep learning model’s performance was assessed against a Random Forest Regressor, using mean absolute error as the evaluation metric to ensure robust and accurate predictions.', link: 'https://github.com/kj22a/Door-dash', color: '#3498db' },
-        { name: 'A/B testing', description: 'This project focuses on applying A/B testing methodologies to evaluate the performance of two marketing campaigns, providing actionable insights for optimising marketing strategies. Through comprehensive explanatory analysis, key metrics like Impressions, Reach, Purchases, and Cost per Mille (CPM) were compared between control and test groups, revealing disparities in audience engagement, cost efficiency, and purchase behaviour. Visualisation using boxplots highlighted performance variability and outliers, while statistical methods, including the Mann-Whitney U test and Rank-Biserial Correlation, quantified the significance and strength of differences. Time-series analysis uncovered trends in conversion rates, click-through rates, and costs, identifying stability in the test group’s performance but inefficiencies in cost management. Findings revealed that while the test group achieved higher engagement, it failed to translate this into improved conversions, with higher costs and variability compared to the control group.', link: 'https://github.com/kj22a/AB-Testing', color: '#e74c3c' },
-        { name: 'Clinical trial', description: 'This project analysed the effectiveness of three pain relief treatments Acetaminophen, Codeine, and Ibuprofen across different age groups (Young Adults, Adults, and Seniors) using advanced statistical methods. Key analyses included effect size calculations (Cohen\'s d), non-parametric tests (Wilcoxon Signed-Rank and Kruskal-Wallis), and post-hoc pairwise comparisons (Dunn\'s Test). Results showed significant pain reduction for all treatments, with Ibuprofen offering the highest overall effectiveness, while Acetaminophen performed best for Seniors, and Codeine was most effective for Adults.', link: 'https://github.com/kj22a/Clinical-trials', color: '#e74c3c' },
-        { name: 'Med insurance', description: 'This project involves building machine learning models to predict medical insurance costs, focusing on the comparison between neural network models and a random forest model. The process included handling missing data, utilising TensorFlow to develop neural networks, and tracking model performance through graphs of absolute error loss across epochs. The models were evaluated using Mean Absolute Error (MAE) and Coefficient of Determination (R²), achieving a value of 0.88, indicating strong predictive accuracy. The neural networks outperformed the random forest model, effectively capturing patterns in the data for more accurate predictions. This project demonstrates the application of advanced machine learning techniques to predict medical insurance costs, optimising model performance while managing complexities inherent in the data.', link: 'https://github.com/kj22a/Medical-insurance', color: '#3498db' },
-	{ name: 'Roulette', description: 'This project developed a Python simulation of a roulette wheel to model bet outcomes and probabilities with precision. The project incorporated game theory strategies, including the Martingale and Fibonacci methods, to simulate and evaluate different betting approaches. Using Plotly, I visualised the results to compare the effectiveness of various strategies, providing valuable insights into their performance and potential risks.', link: 'https://github.com/kj22a/Roulette-simulation-', color: '#800080' },
-        { name: 'Forecasting', description: 'In this project, I forecasted the British Pound (GBP) to US Dollar (USD) exchange rate using multiple time series modelling techniques. The analysis started with data pre-processing, including calculating autocorrelation and applying the Augmented Dickey-Fuller test to ensure stationarity. I conducted seasonal decomposition to visually explore the components of the time series, followed by fitting Autoregressive (AR) and Autoregressive Integrated Moving Average (ARIMA) models, which provided useful insights but were less effective compared to more advanced methods. I then applied Extreme Gradient Boosting (XGBoost), Hidden Markov Models (HMM), and Monte Carlo simulations. The HMM approach yielded remarkably accurate predictions, while XGBoost performed very well, providing valuable results with high predictive power. The combination of these methods enabled me to forecast the GBP to USD exchange rate with increased accuracy, providing a detailed comparison of the strengths and weaknesses of each approach. This project highlights my ability to leverage statistical models, machine learning techniques, and simulations for time series forecasting and predictive analytics.', link: 'https://github.com/kj22a/Forecasting', color: '#800080' },
-	{ name: 'Loans', description: 'This project focused on constructing a loan approval model utilising 12 key features, including marital status and credit score, to predict loan outcomes effectively. Rigorous statistical tests such as Chi-squared, Mann-Whitney-U, and Kolmogorov-Smirnov were conducted to select the most impactful features, ensuring model reliability. Dependencies between features and loan status were visualised through comprehensive charts and graphs, enhancing interpretability. A Stacked Classifier integrating seven models was employed, with Singular Value Decomposition applied for dimensionality reduction and hyperparameter optimisation achieved using advanced techniques like gradient descent, grid search, and Bayesian methods. The model performance was thoroughly evaluated using F1 score, confusion matrix, accuracy, ROC curve, and AUC metrics, ensuring robust and accurate predictions.', link: 'https://github.com/kj22a/Loan-Prediction', color: '#2ecc71' }
-    ];
-
-     let score = 0;
-
-    // Create falling blocks
-    function spawnBlock() {
-        if (!gamePaused) {
-            const project = projects[Math.floor(Math.random() * projects.length)];
-            blocks.push({
-                x: Math.random() * (canvas.width - blockWidth),
-                y: -blockHeight,
-                width: blockWidth,
-                height: blockHeight,
-                color: project.color,
-                project: project
-            });
-        }
-    }
-
-    setInterval(spawnBlock, 2000); // Reduce the spawn rate
-
-    // Player movement
-    let keys = {};
-    window.addEventListener('keydown', (e) => (keys[e.key] = true));
-    window.addEventListener('keyup', (e) => (keys[e.key] = false));
-
-    function movePlayer() {
-        if (keys['ArrowLeft'] && player.x > 0) {
-            player.x -= player.speed;
-        }
-        if (keys['ArrowRight'] && player.x + player.width < canvas.width) {
-            player.x += player.speed;
-        }
-    }
-
-    // Collision detection
-    function isColliding(rect1, rect2) {
-        return (
-            rect1.x < rect2.x + rect2.width &&
-            rect1.x + rect1.width > rect2.x &&
-            rect1.y < rect2.y + rect2.height &&
-            rect1.y + rect1.height > rect2.y
-        );
-    }
-
-    function showProjectDetails(project) {
-        const popup = document.getElementById('projectPopup');
-        const title = document.getElementById('popupTitle');
-        const description = document.getElementById('popupDescription');
-
-        title.textContent = project.name;
-        description.textContent = project.description;
-	description.innerHTML = `
-        ${project.description}
-        ${project.link ? `<br><br><a href="${project.link}" target="_blank" style="color: #3498db; text-decoration: none;">View on GitHub</a>` : ''}
- 	`;
-
-        popup.style.display = 'block';
-
-        gamePaused = true; // Pause game
-    }
-
-    function closePopup() {
-        const popup = document.getElementById('projectPopup');
-        popup.style.display = 'none';
-        gamePaused = false; // Resume game
-    }
-
-    // Update game
-    function update() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Draw stars
-        stars.forEach(star => {
-            ctx.beginPath();
-            ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
-            ctx.fill();
-            ctx.closePath();
-            
-            // Make stars twinkle and Move stars based on their z-depth
-        star.y += 0.5 / star.z;
-        if (star.y > canvas.height) {
-            star.y = -star.radius;
-            star.x = Math.random() * canvas.width;
-        }
-    });
-
-    // Draw comet
-    ctx.beginPath();
-    const gradient = ctx.createRadialGradient(comet.x, comet.y, 5, comet.x, comet.y, 30);
-    gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
-    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-    ctx.fillStyle = gradient;
-    ctx.arc(comet.x, comet.y, 30, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.closePath();
-
-    comet.x += comet.speedX;
-    comet.y += comet.speedY;
-
-    // Reset comet when out of view
-    if (comet.x > canvas.width + 100 || comet.y > canvas.height + 100) {
-        comet.x = -100;
-        comet.y = Math.random() * canvas.height;
-    }
-
-    // Draw player spaceship
-    ctx.fillStyle = player.color;
-    ctx.beginPath();
-    ctx.moveTo(player.x + player.width / 2, player.y);
-    ctx.lineTo(player.x, player.y + player.height);
-    ctx.lineTo(player.x + player.width, player.y + player.height);
-    ctx.closePath();
-    ctx.fill();
-
-    movePlayer();
-
-    // Draw and update blocks
-    blocks.forEach((block, index) => {
-        block.y += blockSpeed;
-        ctx.fillStyle = block.color;
-        ctx.fillRect(block.x, block.y, block.width, block.height);
-
-        ctx.fillStyle = 'white';
-        ctx.font = '16px Poppins';
-        ctx.textAlign = 'center';
-        ctx.fillText(block.project.name, block.x + block.width / 2, block.y + block.height / 2 + 5);
-
-        // Check collision with player
-        if (isColliding(player, block)) {
-            blocks.splice(index, 1); // Remove block
-            showProjectDetails(block.project);
-        }
-
-        // Remove blocks that fall off screen
-        if (block.y > canvas.height) {
-            blocks.splice(index, 1);
-        }
-    });
-}
-
-// Animate game
-function animate() {
-    if (!gameStarted) return;
-    update();
-    requestAnimationFrame(animate);
-}
-
-// Handle window resize
-window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+/* Round-robin interleave so identical symbols are spread along the strip.
+   This is not only cosmetic: it guarantees no two scatters fall inside the
+   same 3-row window, which is what makes the exact scatter distribution a
+   clean Poisson-binomial over the five reels. */
+const STRIPS = STRIP_COUNTS.map(counts => {
+  const b = { ...counts }, keys = Object.keys(b).sort(), out = [];
+  let left = Object.values(counts).reduce((a,c)=>a+c,0), k = 0;
+  while (left > 0) { const key = keys[k % keys.length];
+    if (b[key] > 0) { out.push(key); b[key]--; left--; } k++; }
+  return out;
 });
+const STRIP_LEN = STRIPS.map(s => s.length);
 
-// Initial star drawing
-update();
+const P = STRIP_COUNTS.map(c => {
+  const len = Object.values(c).reduce((a,b)=>a+b,0), o = { len };
+  SYMS.forEach(s => o[s.id] = (c[s.id]||0)/len);
+  return o;
+});
+const A = (r,X) => P[r][X] + P[r].WLD;
 
+/* P(run of exactly k for X) = p1(X)·∏_{i=2..k} A(i,X) · (1 − A(k+1,X)),  k<5
+                             = p1(X)·∏_{i=2..5} A(i,X),                   k=5 */
+function runProb(X,k){
+  let p = P[0][X];
+  for (let i=1;i<k;i++) p *= A(i,X);
+  if (k<REELS) p *= (1 - A(k,X));
+  return p;
+}
+function lineStats(){
+  let ev=0, hit=0; const contrib={};
+  for (const X of PAYING){ let c=0;
+    for (let k=3;k<=5;k++){ const p=runProb(X,k); ev+=p*PAYS[X][k]; hit+=p; c+=p*PAYS[X][k]; }
+    contrib[X]=c; }
+  return { ev, hitProbPerLine:hit, contrib };
+}
+function scatterStats(){
+  let dp=[1];
+  for (let r=0;r<REELS;r++){
+    const q = Math.min(1, ROWS*P[r].SCT), nx = new Array(dp.length+1).fill(0);
+    for (let n=0;n<dp.length;n++){ nx[n]+=dp[n]*(1-q); nx[n+1]+=dp[n]*q; }
+    dp = nx;
+  }
+  let rtp=0, hit=0;
+  for (let n=3;n<=REELS;n++){ rtp += dp[n]*(SCATTER_PAYS[n]||0); hit += dp[n]; }
+  return { rtp, hitProb:hit, dist:dp };
+}
+function theoretical(){
+  const L = lineStats(), S = scatterStats();
+  return { rtp:L.ev+S.rtp, rtpLines:L.ev, rtpScatter:S.rtp,
+           hitProbPerLine:L.hitProbPerLine, scatterHitProb:S.hitProb,
+           contrib:{...L.contrib, SCT:S.rtp}, scatterDist:S.dist };
+}
+const THEO = theoretical();
 
-		
+const PAYLINES = [
+  [1,1,1,1,1],[0,0,0,0,0],[2,2,2,2,2],[0,1,2,1,0],[2,1,0,1,2],
+  [0,0,1,2,2],[2,2,1,0,0],[1,0,1,2,1],[1,2,1,0,1],[0,1,1,1,0],
+  [2,1,1,1,2],[1,1,0,1,1],[1,1,2,1,1],[0,1,0,1,0],[2,1,2,1,2],
+  [1,0,0,0,1],[1,2,2,2,1],[0,0,1,0,0],[2,2,1,2,2],[0,2,0,2,0],
+];
 
+const spinStops = () => STRIPS.map(s => (Math.random()*s.length)|0);
+const windowFromStops = st => st.map((stop,r) => {
+  const s = STRIPS[r], L = s.length;
+  return [s[stop%L], s[(stop+1)%L], s[(stop+2)%L]];
+});
+function evaluate(grid){
+  let total=0; const wins=[];
+  PAYLINES.forEach((line,li)=>{
+    const first = grid[0][line[0]];
+    if (!PAYS[first]) return;
+    let k=1;
+    for (let r=1;r<REELS;r++){ const s=grid[r][line[r]]; if (s===first||s==='WLD') k++; else break; }
+    if (k>=3){ const pay=PAYS[first][k]; total+=pay; wins.push({type:'line',line:li,sym:first,count:k,pay}); }
+  });
+  let sc=0; const pos=[];
+  for (let r=0;r<REELS;r++) for (let row=0;row<ROWS;row++)
+    if (grid[r][row]==='SCT'){ sc++; pos.push([r,row]); }
+  if (sc>=3){ const pay=(SCATTER_PAYS[sc]||0)*BET; total+=pay;
+              wins.push({type:'scatter',sym:'SCT',count:sc,pay,positions:pos}); }
+  return { total, wins };
+}
+
+/* ============================================================================
+   2. PROJECTS
+   ========================================================================== */
+const CV_URL = 'https://github.com/kj22a/Portfolio/raw/main/CV_new.pdf'; // TODO 1
+
+const PROJECTS = {
+  CRK:{ title:'Cricket Trading Platform', tag:'Full stack · Live trading',
+    link:'', /* TODO 2 */
+    tags:['React','Flask','Python','XGBoost','Monte Carlo','Hazard models'],
+    body:`<p>An in-play cricket trading application built end to end — a React front end against a Flask/Python REST back end — that ingests live match state and returns priced positions in real time.</p>
+    <p>The modelling layer underneath combines three pieces: an XGBoost classifier reading ball-by-ball match state, a discrete-time hazard model converting that into a per-delivery probability, and a 10,000-path Monte Carlo pricer that turns the probability curve into a price.</p>
+    <p>It runs in live use for my own cricket trading, which means it has to survive real market conditions rather than a clean backtest — latency, missing data mid-over, and prices that move faster than the model reprices.</p>` },
+
+  SRG:{ title:'BBL Surge Model', tag:'Survival analysis · Simulation',
+    link:'', /* TODO 3 */
+    tags:['XGBoost','Hazard model','Monte Carlo','Survival analysis','Python'],
+    body:`<p>A model predicting scoring surges in Big Bash League matches from ball-by-ball state. An XGBoost classifier provides the base signal, but classification at match level is the wrong shape for a market that reprices every single delivery — so a discrete-time hazard layer converts it into a conditional onset probability per ball.</p>
+    <p>The interesting part is the simulation. Running 10,000 paths over the hazard curve means handling the diminishing survivor set explicitly: once a surge fires on ball <em>k</em>, only the unfired paths propagate forward, so the remaining sample has to be sorted and re-normalised at every step. Skip that and the conditional probabilities are quietly biased — later balls get evaluated against a population that has already partly left.</p>
+    <p>That correction is the difference between a model that looks right in aggregate and one that prices correctly ball by ball.</p>` },
+
+  SLT:{ title:'Slot Math Engine', tag:'You are playing it',
+    link:'', /* TODO 4 */
+    tags:['Combinatorics','Monte Carlo','RTP','Volatility','JavaScript','Python'],
+    body:`<p>The game on this page. A configurable slot engine driving five independent reel strips, with symbol weights, the paytable and the payline set all parameterised so different game configurations can be compared.</p>
+    <p>Its return to player is computed in closed form from the strips rather than estimated — the exact figure and the derivation are in <strong>The Maths</strong> panel — and the Monte Carlo simulator is there to confirm the closed form rather than to substitute for it. Run a million spins and watch the measured line converge onto the theoretical one.</p>
+    <p>Wilds are restricted to reels 2 to 4. That is a normal commercial design choice, and it has a useful side effect: with reel 1 never wild, the paying symbol of a left-aligned run is always uniquely determined, so the RTP integral stays exact instead of needing a max-pay tie-break.</p>` },
+
+  ROU:{ title:'Roulette Simulation', tag:'Staking systems · Game theory',
+    link:'https://github.com/kj22a/Roulette-simulation-',
+    tags:['Monte Carlo','Martingale','Fibonacci','Plotly','Python'],
+    body:`<p>A Python simulation of a roulette wheel modelling bet outcomes and probabilities, extended with staking strategies including Martingale and Fibonacci progressions.</p>
+    <p>Visualising the terminal-bankroll distributions in Plotly makes the real result legible: progression systems reshape the distribution — fatter left tail, higher ruin probability, more frequent small wins — while leaving expected value pinned exactly where the house edge puts it. The strategies feel different and are mathematically identical in the only sense that matters.</p>` },
+
+  FX:{ title:'GBP/USD Forecasting', tag:'Time series · Regime detection',
+    link:'https://github.com/kj22a/Forecasting',
+    tags:['Hidden Markov Models','ARIMA','XGBoost','Monte Carlo','Python'],
+    body:`<p>Forecasting the GBP/USD exchange rate across several modelling approaches. The groundwork was autocorrelation analysis, an Augmented Dickey-Fuller test for stationarity, and seasonal decomposition to see what the series was actually made of.</p>
+    <p>AR and ARIMA models gave a baseline. Extreme Gradient Boosting, Hidden Markov Models and Monte Carlo simulation went considerably further — the HMM approach was the strongest, which makes sense for a series that behaves like it switches between regimes rather than following one process.</p>
+    <p>The value of the project is the comparison rather than any single model: the same series, five methods, and a clear account of where each one breaks down.</p>` },
+
+  LON:{ title:'Loan Approval Model', tag:'Classification · Feature selection',
+    link:'https://github.com/kj22a/Loan-Prediction',
+    tags:['Stacked ensemble','SVD','Bayesian optimisation','ROC/AUC','Python'],
+    body:`<p>A loan approval model built on 12 features including marital status and credit score. Feature selection went through Chi-squared, Mann-Whitney U and Kolmogorov-Smirnov tests rather than being taken on faith, with dependencies between features and loan status visualised throughout.</p>
+    <p>The classifier is a stacked ensemble of seven models, with Singular Value Decomposition for dimensionality reduction and hyperparameters tuned by gradient descent, grid search and Bayesian methods. Evaluated on F1, confusion matrix, accuracy, ROC curve and AUC — a spread that matters here, because approval data is imbalanced enough that accuracy alone would flatter almost anything.</p>` },
+
+  DIA:{ title:'Diabetes Predictor', tag:'Deployed model · Flask',
+    link:'https://github.com/kj22a/Diabetes_Predictor',
+    tags:['Voting classifier','Bagging','Kruskal-Wallis','Flask','Python'],
+    body:`<p>A model predicting diabetes from health indicators including BMI, glucose and age. Preprocessing dealt with missing values, outliers and normalisation; feature engineering used Q-Q plots, Kruskal-Wallis tests and Spearman rank correlation to identify what was actually carrying signal.</p>
+    <p>The model is a Voting Classifier over five stacked models using bagging for diversity, scored on accuracy and F1. It is deployed behind a Flask interface, which was the point — the model exists to be used, not to sit in a notebook.</p>` },
+
+  DDH:{ title:'DoorDash Delivery Analysis', tag:'Clustering · Deep learning',
+    link:'https://github.com/kj22a/Door-dash',
+    tags:['DBSCAN','TensorFlow','Plotly 3D','Random Forest','Python'],
+    body:`<p>Around 200,000 rows of delivery data, prepared with statistical testing and datetime manipulation, with DBSCAN used to identify and strip outliers.</p>
+    <p>A TensorFlow neural network was tuned across 10 hyperparameter configurations and tracked by epoch-loss curves, then benchmarked against a Random Forest Regressor on mean absolute error. Interactive 3D Plotly visualisations made the structure of the data — and where the model was failing — visible rather than merely tabulated.</p>` },
+
+  ABT:{ title:'A/B Testing for Marketing', tag:'Experimentation · Inference',
+    link:'https://github.com/kj22a/AB-Testing',
+    tags:['Mann-Whitney U','Rank-biserial','Time series','Python'],
+    body:`<p>An A/B test evaluating two marketing campaigns across impressions, reach, purchases and cost per mille. Boxplots exposed the variability and outliers; the Mann-Whitney U test and rank-biserial correlation quantified both significance and effect size.</p>
+    <p>The finding was the useful kind of negative result: the test group won on engagement but failed to convert it, at higher cost and with more variance than the control. Time-series analysis of conversion and click-through rates confirmed the pattern was stable rather than a sampling artefact.</p>` },
+
+  CLN:{ title:'Clinical Trial Efficacy', tag:'Non-parametric statistics',
+    link:'https://github.com/kj22a/Clinical-trials',
+    tags:["Cohen's d",'Wilcoxon','Kruskal-Wallis',"Dunn's test",'Python'],
+    body:`<p>An analysis of three pain relief treatments — Acetaminophen, Codeine and Ibuprofen — across Young Adult, Adult and Senior cohorts.</p>
+    <p>Effect sizes via Cohen's d, significance via Wilcoxon Signed-Rank and Kruskal-Wallis, and pairwise comparison via Dunn's post-hoc test. All three treatments reduced pain significantly, with Ibuprofen strongest overall, Acetaminophen best for Seniors and Codeine best for Adults — a result that only appears once you stop pooling the age groups.</p>` },
+
+  INS:{ title:'Medical Insurance Costs', tag:'Regression · Model comparison',
+    link:'https://github.com/kj22a/Medical-insurance',
+    tags:['TensorFlow','Random Forest','MAE','R² = 0.88','Python'],
+    body:`<p>Predicting medical insurance costs, framed as a head-to-head between neural networks and a Random Forest. Absolute error loss was tracked across epochs, and both models scored on Mean Absolute Error and R².</p>
+    <p>The neural network reached an R² of 0.88 and outperformed the Random Forest, capturing interaction structure in the data that the tree ensemble flattened.</p>` },
+};
+
+/* ============================================================================
+   3. ICONS
+   ========================================================================== */
+const ICONS = {
+  CRK:'<circle cx="12" cy="12" r="8"/><path d="M6.6 6.6c3.2 2.6 3.2 8.2 0 10.8M17.4 6.6c-3.2 2.6-3.2 8.2 0 10.8"/>',
+  SRG:'<path d="M3 18l4.5-5.5 3.2 3.2L16.5 8"/><path d="M12.5 8h4v4"/><path d="M3 21h18"/>',
+  SLT:'<rect x="3" y="4.5" width="4.6" height="15" rx="1.2"/><rect x="9.7" y="4.5" width="4.6" height="15" rx="1.2"/><rect x="16.4" y="4.5" width="4.6" height="15" rx="1.2"/>',
+  ROU:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2.4"/><path d="M12 3.5v6.1M12 14.4v6.1M3.5 12h6.1M14.4 12h6.1"/>',
+  FX:'<path d="M6.5 3.5v4M6.5 16.5v4M17 3.5v3M17 17.5v3"/><rect x="4" y="7.5" width="5" height="9" rx="1.2"/><rect x="14.5" y="6.5" width="5" height="11" rx="1.2"/>',
+  LON:'<rect x="4.5" y="3" width="15" height="18" rx="2"/><path d="M8.5 8.5h7M8.5 12.5h7M8.5 16.5h4"/>',
+  DIA:'<path d="M12 3.2c3.9 4.9 5.9 7.4 5.9 10.2A5.9 5.9 0 0 1 6.1 13.4C6.1 10.6 8.1 8.1 12 3.2z"/><path d="M9.4 14.2a2.7 2.7 0 0 0 2.6 2.2"/>',
+  DDH:'<path d="M4 8l8-4 8 4v8l-8 4-8-4z"/><path d="M4 8l8 4 8-4M12 12v8"/>',
+  ABT:'<rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M12 4.5v15"/><path d="M6.2 14l1.9-5 1.9 5M6.8 12.4h2.6"/><path d="M14.6 9h1.9a1.3 1.3 0 0 1 0 2.6h-1.9zm0 2.6h2.1a1.4 1.4 0 0 1 0 2.8h-2.1z"/>',
+  CLN:'<rect x="1.6" y="8.6" width="20.8" height="6.8" rx="3.4" transform="rotate(-45 12 12)"/><path d="M9.5 6.9l7.6 7.6"/>',
+  INS:'<path d="M12 3l7.2 3v6.1c0 4.6-3.1 7.7-7.2 9.2-4.1-1.5-7.2-4.6-7.2-9.2V6z"/><path d="M9 12.2l2.1 2.1 4-4.2"/>',
+  WLD:'<path d="M12 2.6l2.9 6.1 6.6.9-4.8 4.7 1.2 6.6-5.9-3.2-5.9 3.2 1.2-6.6L2.5 9.6l6.6-.9z"/>',
+  SCT:'<circle cx="12" cy="12" r="3.6"/><path d="M12 1.5v3.4M12 19.1v3.4M1.5 12h3.4M19.1 12h3.4M4.4 4.4l2.4 2.4M17.2 17.2l2.4 2.4M19.6 4.4l-2.4 2.4M6.8 17.2l-2.4 2.4"/>',
+};
+const svg = (id, cls='') => `<svg class="${cls}" viewBox="0 0 24 24">${ICONS[id]}</svg>`;
+
+/* ============================================================================
+   4. STATE
+   ========================================================================== */
+const S = {
+  balance: 5000, spins: 0, wagered: 0, returned: 0, hits: 0, maxWin: 0, sumSq: 0,
+  discovered: new Set(), busy: false, auto: 0, series: [],
+};
+
+const $ = id => document.getElementById(id);
+const fmt = n => Math.round(n).toLocaleString('en-GB');
+const pct = (x, d=2) => (x*100).toFixed(d) + '%';
+
+/* ============================================================================
+   5. REELS
+   ========================================================================== */
+const reelsEl = $('reels');
+const reelEls = [], stripEls = [];
+for (let r = 0; r < REELS; r++) {
+  const reel = document.createElement('div'); reel.className = 'reel';
+  const strip = document.createElement('div'); strip.className = 'strip';
+  reel.appendChild(strip); reelsEl.appendChild(reel);
+  reelEls.push(reel); stripEls.push(strip);
+}
+
+function cellHTML(sym){
+  const s = SYM[sym];
+  return `<div class="cellwrap"><div class="cell t-${s.tier}" data-sym="${sym}">
+    ${svg(sym)}<span class="lab">${sym}</span></div></div>`;
+}
+const randSym = r => STRIPS[r][(Math.random()*STRIPS[r].length)|0];
+
+function paintStatic(grid){
+  grid.forEach((col, r) => {
+    stripEls[r].style.transition = 'none';
+    stripEls[r].style.transform = 'translateY(0)';
+    stripEls[r].innerHTML = col.map(cellHTML).join('');
+  });
+}
+
+function spinReels(grid){
+  return new Promise(resolve => {
+    const cell = reelEls[0].clientHeight / 3;
+    const PAD = 18;
+    let done = 0;
+    grid.forEach((col, r) => {
+      const filler = Array.from({length: PAD}, () => randSym(r));
+      stripEls[r].innerHTML = [...filler, ...col].map(cellHTML).join('');
+      stripEls[r].style.transition = 'none';
+      stripEls[r].style.transform = 'translateY(0)';
+      reelEls[r].classList.add('spinning');
+      void stripEls[r].offsetHeight;                       // force reflow
+      const dur = 620 + r * 165;
+      stripEls[r].style.transition = `transform ${dur}ms cubic-bezier(.16,.78,.24,1)`;
+      stripEls[r].style.transform = `translateY(${-PAD * cell}px)`;
+      setTimeout(() => {
+        reelEls[r].classList.remove('spinning');
+        beep(210 + r*26, 0.05, 0.05);
+        if (++done === REELS) resolve();
+      }, dur);
+    });
+  });
+}
+
+/* win line overlay */
+const lc = $('lineCanvas'), lctx = lc.getContext('2d');
+function sizeCanvas(){
+  const dpr = window.devicePixelRatio || 1;
+  const w = reelsEl.clientWidth - 14, h = reelsEl.clientHeight - 14;
+  lc.width = w*dpr; lc.height = h*dpr; lc.style.width = w+'px'; lc.style.height = h+'px';
+  lctx.setTransform(dpr,0,0,dpr,0,0);
+}
+function drawLines(wins){
+  sizeCanvas();
+  const w = lc.clientWidth, h = lc.clientHeight;
+  lctx.clearRect(0,0,w,h);
+  const cw = w/5, ch = h/3;
+  const lineWins = wins.filter(x => x.type==='line');
+  lineWins.forEach((win, i) => {
+    const pl = PAYLINES[win.line];
+    lctx.beginPath();
+    for (let r = 0; r < win.count; r++){
+      const x = cw*r + cw/2, y = ch*pl[r] + ch/2;
+      r === 0 ? lctx.moveTo(x,y) : lctx.lineTo(x,y);
+    }
+    lctx.strokeStyle = i === 0 ? 'rgba(240,180,41,.85)' : 'rgba(34,211,238,.5)';
+    lctx.lineWidth = 2.5; lctx.lineJoin = 'round'; lctx.lineCap = 'round';
+    lctx.shadowColor = lctx.strokeStyle; lctx.shadowBlur = 9;
+    lctx.stroke(); lctx.shadowBlur = 0;
+  });
+}
+function highlight(wins){
+  wins.forEach(win => {
+    if (win.type === 'line'){
+      const pl = PAYLINES[win.line];
+      for (let r = 0; r < win.count; r++) markCell(r, pl[r]);
+    } else win.positions.forEach(([r,row]) => markCell(r,row));
+  });
+}
+function markCell(r,row){
+  const cells = stripEls[r].querySelectorAll('.cell');
+  const c = cells[cells.length - 3 + row];
+  if (c) c.classList.add('win');
+}
+
+/* ============================================================================
+   6. AUDIO (synthesised, no assets)
+   ========================================================================== */
+let AC = null, muted = false;
+function beep(freq, dur=0.07, gain=0.04){
+  if (muted) return;
+  try{
+    AC = AC || new (window.AudioContext||window.webkitAudioContext)();
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = 'triangle'; o.frequency.value = freq;
+    g.gain.setValueAtTime(gain, AC.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + dur);
+    o.connect(g); g.connect(AC.destination);
+    o.start(); o.stop(AC.currentTime + dur);
+  }catch(e){}
+}
+const winJingle = n => [0,1,2,3].slice(0, Math.min(4, n)).forEach((k,i) =>
+  setTimeout(() => beep(430 + k*140, 0.1, 0.05), i*85));
+
+/* ============================================================================
+   7. STATS + CHART
+   ========================================================================== */
+function record(total){
+  S.spins++; S.wagered += BET; S.returned += total;
+  if (total > 0) S.hits++;
+  if (total > S.maxWin) S.maxWin = total;
+  const x = total / BET; S.sumSq += x*x;
+  const n = S.spins;
+  if (n <= 60 || n % Math.max(1, Math.floor(n/220)) === 0)
+    S.series.push([n, S.returned / S.wagered]);
+}
+function volatility(){
+  if (!S.spins) return 0;
+  const m = S.returned / S.wagered;
+  return Math.sqrt(Math.max(0, S.sumSq/S.spins - m*m));
+}
+function refresh(){
+  $('balance').textContent = fmt(S.balance);
+  $('sSpins').textContent  = fmt(S.spins);
+  $('sWag').textContent    = fmt(S.wagered);
+  $('sRet').textContent    = fmt(S.returned);
+  $('theoRTP').textContent = pct(THEO.rtp, 2);
+  if (S.spins){
+    const act = S.returned / S.wagered;
+    $('actRTP').textContent  = pct(act, 2);
+    $('sHit').textContent    = pct(S.hits/S.spins, 1);
+    $('sVol').textContent    = volatility().toFixed(2);
+    $('sMax').textContent    = (S.maxWin/BET).toFixed(1) + '×';
+    const se = volatility()/Math.sqrt(S.spins);
+    $('rtpDelta').textContent = se > 0
+      ? `${fmt(S.spins)} spins · ${((act-THEO.rtp)/se).toFixed(1)} SE`
+      : `${fmt(S.spins)} spins`;
+  } else {
+    $('actRTP').textContent = '—'; $('rtpDelta').textContent = '0 spins';
+  }
+  const d = S.discovered.size;
+  $('discN').textContent = `${d} / 11`;
+  $('discBar').style.width = (d/11*100) + '%';
+  drawChart();
+}
+
+const chart = $('chart'), cx = chart.getContext('2d');
+function drawChart(){
+  const dpr = window.devicePixelRatio || 1;
+  const w = chart.clientWidth, h = chart.clientHeight;
+  chart.width = w*dpr; chart.height = h*dpr; cx.setTransform(dpr,0,0,dpr,0,0);
+  cx.clearRect(0,0,w,h);
+
+  const PADL = 34, PADR = 8, PADT = 10, PADB = 16;
+  const iw = w-PADL-PADR, ih = h-PADT-PADB;
+  const maxN = Math.max(100, S.spins);
+  const lx = n => PADL + (Math.log10(Math.max(1,n))/Math.log10(maxN)) * iw;
+  // y-range tightens as the run converges, so the final state is legible
+  const sd = S.spins > 30 ? volatility() : 3.74;
+  const half = S.spins > 300
+    ? Math.min(0.55, Math.max(0.02, 4.5 * sd / Math.sqrt(S.spins)))
+    : 0.55;
+  const lo = THEO.rtp - half, hi = THEO.rtp + half;
+  const ly = v => PADT + (1 - (Math.min(hi,Math.max(lo,v))-lo)/(hi-lo)) * ih;
+  const dp = half < 0.02 ? 2 : half < 0.15 ? 1 : 0;
+
+  // ±2 SE funnel
+  cx.beginPath();
+  for (let px = 0; px <= iw; px++){
+    const n = Math.pow(10, (px/iw)*Math.log10(maxN));
+    cx.lineTo(PADL+px, ly(THEO.rtp + 2*sd/Math.sqrt(Math.max(1,n))));
+  }
+  for (let px = iw; px >= 0; px--){
+    const n = Math.pow(10, (px/iw)*Math.log10(maxN));
+    cx.lineTo(PADL+px, ly(THEO.rtp - 2*sd/Math.sqrt(Math.max(1,n))));
+  }
+  cx.closePath(); cx.fillStyle = 'rgba(240,180,41,.09)'; cx.fill();
+
+  // theoretical line
+  cx.beginPath(); cx.moveTo(PADL, ly(THEO.rtp)); cx.lineTo(w-PADR, ly(THEO.rtp));
+  cx.strokeStyle = 'rgba(240,180,41,.85)'; cx.lineWidth = 1.5;
+  cx.setLineDash([5,4]); cx.stroke(); cx.setLineDash([]);
+
+  // axis labels
+  cx.fillStyle = '#5b6b85'; cx.font = '9px Inter, sans-serif'; cx.textAlign = 'right';
+  cx.fillText(pct(hi,dp), PADL-5, ly(hi)+3);
+  cx.fillText(pct(lo,dp), PADL-5, ly(lo)+3);
+  cx.fillStyle = '#a9843a'; cx.fillText(pct(THEO.rtp,dp), PADL-5, ly(THEO.rtp)+3);
+
+  // measured series
+  // Points outside the visible band BREAK the line rather than clamping to the
+  // edge -- clamping would draw a flat run along the top that looks like data.
+  if (S.series.length > 1){
+    cx.beginPath();
+    let pen = false;
+    for (const [n,v] of S.series){
+      if (v < lo || v > hi){ pen = false; continue; }
+      const x = lx(n), y = ly(v);
+      pen ? cx.lineTo(x,y) : cx.moveTo(x,y);
+      pen = true;
+    }
+    cx.strokeStyle = '#22d3ee'; cx.lineWidth = 1.7; cx.lineJoin = 'round';
+    cx.shadowColor = 'rgba(34,211,238,.55)'; cx.shadowBlur = 6; cx.stroke(); cx.shadowBlur = 0;
+  }
+}
+
+/* ============================================================================
+   8. SPIN FLOW
+   ========================================================================== */
+function unlock(sym, auto){
+  if (!PROJECTS[sym] || S.discovered.has(sym)) return;
+  S.discovered.add(sym);
+  renderChips();
+  toast(sym, 'Project unlocked', PROJECTS[sym].title);
+  if (!auto) setTimeout(() => openProject(sym), 780);
+}
+
+async function doSpin(auto=false){
+  if (S.busy) return;
+  if (S.balance < BET){ S.balance += 5000; toast('SCT','Credits topped up','Play money, no wagering'); }
+  S.busy = true; $('spinBtn').disabled = true; $('simBtn').disabled = true;
+  S.balance -= BET;
+  $('winbar').classList.remove('on');
+  $('winbar').textContent = 'Spinning…';
+  lctx.clearRect(0,0,lc.width,lc.height);
+
+  const grid = windowFromStops(spinStops());
+  await spinReels(grid);
+  const res = evaluate(grid);
+
+  S.balance += res.total;
+  record(res.total);
+
+  if (res.total > 0){
+    highlight(res.wins); drawLines(res.wins); winJingle(res.wins.length);
+    const best = res.wins.slice().sort((a,b)=>b.pay-a.pay)[0];
+    const label = best.type === 'scatter'
+      ? `${best.count} scatters`
+      : `${best.count}× ${SYM[best.sym].name}`;
+    $('winbar').innerHTML = `${label} <span class="amt num">+${fmt(res.total)}</span>
+      <span style="color:var(--dim);font-weight:400">(${(res.total/BET).toFixed(1)}× bet)</span>`;
+    $('winbar').classList.add('on');
+    res.wins.forEach(win => { if (win.type === 'line') unlock(win.sym, auto); });
+    if (res.wins.some(w => w.type === 'scatter') && !auto)
+      setTimeout(() => openOverlay('ovAbout'), 800);
+  } else {
+    $('winbar').textContent = 'No win — spin again';
+  }
+
+  refresh();
+  S.busy = false; $('spinBtn').disabled = false; $('simBtn').disabled = false;
+
+  if (S.auto > 0){ S.auto--; if (S.auto > 0) setTimeout(() => doSpin(true), 260); else setAuto(0); }
+}
+
+function setAuto(n){
+  S.auto = n;
+  $('autoBtn').textContent = n > 0 ? `Stop (${n})` : 'Auto ×50';
+  $('autoBtn').classList.toggle('on', n > 0);
+  if (n > 0 && !S.busy) doSpin(true);
+}
+
+/* fast simulation, chunked so the convergence is visible */
+function fastSim(target){
+  if (S.busy) return;
+  S.busy = true; setAuto(0);
+  $('spinBtn').disabled = true; $('simBtn').disabled = true;
+  let done = 0;
+  const CHUNK = 20000;
+  const step = () => {
+    const n = Math.min(CHUNK, target - done);
+    for (let i = 0; i < n; i++){
+      const { total, wins } = evaluate(windowFromStops(spinStops()));
+      // a simulation is a measurement, not a session -- it never touches credits
+      record(total);
+      for (const win of wins) if (win.type === 'line' && !S.discovered.has(win.sym)) S.discovered.add(win.sym);
+    }
+    done += n;
+    $('simBtn').textContent = `${Math.round(done/target*100)}%`;
+    $('winbar').textContent = `Simulating… ${fmt(done)} / ${fmt(target)} spins`;
+    renderChips(); refresh();
+    if (done < target) requestAnimationFrame(step);
+    else {
+      $('simBtn').textContent = 'Simulate 1,000,000';
+      const act = S.returned/S.wagered, se = volatility()/Math.sqrt(S.spins);
+      $('winbar').innerHTML = `Measured <b class="num">${pct(act,3)}</b> vs exact
+        <b class="num" style="color:var(--gold)">${pct(THEO.rtp,3)}</b>
+        <span style="color:var(--dim);font-weight:400">— ${Math.abs((act-THEO.rtp)/se).toFixed(2)} standard errors apart</span>`;
+      $('winbar').classList.add('on');
+      S.busy = false; $('spinBtn').disabled = false; $('simBtn').disabled = false;
+    }
+  };
+  requestAnimationFrame(step);
+}
+
+/* ============================================================================
+   9. PANELS
+   ========================================================================== */
+function renderChips(){
+  $('chips').innerHTML = PAYING.map(id => {
+    const found = S.discovered.has(id);
+    return `<button class="chip ${found?'found':'locked'}" data-proj="${id}">
+      ${svg(id)}<span>${found ? PROJECTS[id].title : '???'}</span></button>`;
+  }).join('');
+}
+
+function openOverlay(id){ $(id).classList.add('open'); }
+function closeAll(){ document.querySelectorAll('.overlay').forEach(o => o.classList.remove('open')); }
+
+function openProject(id){
+  const p = PROJECTS[id];
+  $('pHead').innerHTML = `<h2 style="display:flex;align-items:center;gap:10px">
+      <span style="display:inline-flex">${svg(id)}</span>${p.title}</h2><p>${p.tag}</p>`;
+  $('pHead').querySelector('svg').style.cssText =
+    'width:24px;height:24px;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;stroke:var(--'+SYM[id].tier+')';
+  $('pBody').innerHTML = `<div class="pbody">${p.body}</div>
+    <div class="tags">${p.tags.map(t=>`<span class="tag2">${t}</span>`).join('')}</div>
+    ${p.link
+      ? `<a class="golink" href="${p.link}" target="_blank" rel="noopener">View on GitHub →</a>`
+      : `<span class="golink dead">Repo coming soon</span>`}`;
+  openOverlay('ovProject');
+}
+
+function renderPayStrip(){
+  const pay = PAYING.map(id =>
+    `<button class="pitem s-${SYM[id].tier}" data-proj="${id}" title="${SYM[id].name}">
+       ${svg(id)}<div><b>${PAYS[id][5]}</b><span>5 of a kind</span></div></button>`).join('');
+  const wild = `<div class="pitem s-wild">${svg('WLD')}<div><b>Wild</b><span>reels 2–4</span></div></div>`;
+  const scat = `<div class="pitem s-scatter">${svg('SCT')}<div><b>${SCATTER_PAYS[5]}×</b><span>5 scatters</span></div></div>`;
+  $('paystrip').innerHTML = pay + wild + scat;
+}
+
+function renderProjects(){
+  $('pgrid').innerHTML = PAYING.map(id => {
+    const p = PROJECTS[id], c = `var(--${SYM[id].tier})`;
+    const text = p.body.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+    return `<button class="pcard" data-proj="${id}" style="--c:${c}">
+      <div class="ic">${svg(id)}<h4>${p.title}</h4></div>
+      <p>${text.slice(0,150)}…</p>
+      <span class="tag">${p.tag}</span></button>`;
+  }).join('');
+}
+
+function renderMath(){
+  const t = THEO;
+  const maxContrib = Math.max(...Object.values(t.contrib));
+  const rows = PAYING.map(id => {
+    const share = t.contrib[id] / maxContrib;   // scaled to the largest, so the bars are readable
+    return `<tr>
+      <td class="sym">${svg(id)}<span>${SYM[id].name}</span></td>
+      <td class="num">${PAYS[id][3]}</td><td class="num">${PAYS[id][4]}</td><td class="num">${PAYS[id][5]}</td>
+      <td class="num">${pct(t.contrib[id],2)}</td>
+      <td style="width:70px"><div class="bars"><i style="width:${(share*100).toFixed(1)}%"></i></div></td>
+    </tr>`;
+  }).join('');
+
+  const stripRows = [...PAYING,'WLD','SCT'].map(id => `<tr>
+      <td class="sym">${svg(id)}<span>${SYM[id].name}</span></td>
+      ${STRIP_COUNTS.map(c => `<td class="num">${c[id]||'·'}</td>`).join('')}
+      <td class="num">${pct(P[0][id],2)}</td></tr>`).join('');
+
+  const scat = t.scatterDist.map((p,n) => n<3 ? '' :
+    `<div class="k">${n} scatters</div><div class="v">${pct(p,4)} → ${SCATTER_PAYS[n]}× bet</div>`).join('');
+
+  $('mathBody').innerHTML = `
+    <div class="mgrid">
+      <div>
+        <div class="msec">
+          <h4>Configuration</h4>
+          <div class="kv">
+            <div class="k">Reels × rows</div><div class="v">5 × 3</div>
+            <div class="k">Paylines</div><div class="v">20 fixed</div>
+            <div class="k">Strip length (each reel)</div><div class="v">${STRIP_LEN.join(' · ')}</div>
+            <div class="k">Bet</div><div class="v">20 credits (1 per line)</div>
+            <div class="k">Wild reels</div><div class="v">2, 3, 4 only</div>
+          </div>
+        </div>
+
+        <div class="msec">
+          <h4>Headline figures</h4>
+          <div class="kv">
+            <div class="k"><b>Exact RTP</b></div><div class="v" style="color:var(--gold)">${pct(t.rtp,4)}</div>
+            <div class="k">— from line wins</div><div class="v">${pct(t.rtpLines,4)}</div>
+            <div class="k">— from scatters</div><div class="v">${pct(t.rtpScatter,4)}</div>
+            <div class="k">Hit probability, per line</div><div class="v">${pct(t.hitProbPerLine,4)}</div>
+            <div class="k">Scatter trigger (3+)</div><div class="v">${pct(t.scatterHitProb,3)} · 1 in ${Math.round(1/t.scatterHitProb)}</div>
+            <div class="k">Volatility (σ, simulated)</div><div class="v">≈ 3.74</div>
+          </div>
+        </div>
+
+        <div class="msec">
+          <h4>Why the RTP is exact, not estimated</h4>
+          <p class="note">Every payline draws one symbol from each reel, and each reel's stop position is
+          uniform over its strip — so the expected win <em>per line</em> is a finite sum over
+          (symbol × run length), not something that needs simulating. Total bet scales with the
+          line count, so the 20-line RTP equals the single-line expectation.</p>
+          <span class="formula">P(run of exactly k for symbol X)
+  =  p₁(X) · ∏ᵢ₌₂..ₖ A(i,X) · (1 − A(k+1,X))     for k &lt; 5
+  =  p₁(X) · ∏ᵢ₌₂..₅ A(i,X)                       for k = 5
+
+where  A(i,X) = P(reel i shows X or a wild)
+
+RTP  =  Σ_X Σ_k  P(exactly k) · pay(X,k)   +   scatter term</span>
+          <p class="note">Wilds are restricted to reels 2–4. Commercially that is ordinary; mathematically
+          it removes the only ambiguous case. If reel 1 could be wild, a run of wilds would qualify
+          as several symbols at once and you would need a max-pay tie-break, which breaks the clean
+          product form. With reel 1 never wild, the paying symbol is always whatever reel 1 shows.</p>
+        </div>
+
+        <div class="msec">
+          <h4>What is <em>not</em> closed form</h4>
+          <p class="note">The 20-line <strong>hit frequency</strong> is measured, not derived. The paylines
+          overlap on the same 15 visible positions, so they are not independent and
+          1 − (1 − p)²⁰ would be wrong. Same for the variance of total return. Those two
+          numbers come from the Monte Carlo run — which is the honest division of labour:
+          closed form where closed form is available, simulation only where it is not.</p>
+        </div>
+
+        <div class="msec">
+          <h4>Scatter distribution</h4>
+          <p class="note">Scatters pay anywhere, so a reel "shows a scatter" with probability
+          3 × count/length. Strips are interleaved so no two scatters fall inside one
+          3-row window, which keeps this an exact Poisson-binomial over the five reels.</p>
+          <div class="kv">${scat}</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="msec">
+          <h4>Paytable and RTP contribution</h4>
+          <table><thead><tr><th>Symbol</th><th>3×</th><th>4×</th><th>5×</th><th>RTP</th><th>Share</th></tr></thead>
+          <tbody>${rows}
+            <tr><td class="sym">${svg('SCT')}<span>Scatter (× total bet)</span></td>
+              <td class="num">2</td><td class="num">20</td><td class="num">200</td>
+              <td class="num">${pct(t.rtpScatter,2)}</td>
+              <td><div class="bars"><i style="width:${(t.rtpScatter/maxContrib*100).toFixed(1)}%"></i></div></td></tr>
+          </tbody></table>
+          <p class="note" style="margin-top:8px">Line pays are per line, for a 1-credit line bet.</p>
+        </div>
+
+        <div class="msec">
+          <h4>Reel strips — symbol counts</h4>
+          <table><thead><tr><th>Symbol</th><th>R1</th><th>R2</th><th>R3</th><th>R4</th><th>R5</th><th>P(R1)</th></tr></thead>
+          <tbody>${stripRows}</tbody></table>
+          <p class="note" style="margin-top:8px">This is the par sheet. Change a single count and the
+          RTP above recomputes — the game is driven by these numbers, not tuned to feel right.</p>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderAbout(){
+  $('aboutBody').innerHTML = `
+    <p>I'm Karujan — a software engineer at Fullpush and a Cambridge engineering graduate.
+    I build probabilistic models and then ship them: Monte Carlo simulation, hazard models and
+    machine learning on one side; Java, Spring Boot, Python and React on the other.</p>
+    <p>Outside work I trade in-play cricket markets using models and an application I built myself,
+    which is where most of the simulation work on this page comes from.</p>
+    <p>This page is a portfolio and a worked example at the same time. The slot is a real one —
+    real reel strips, a real paytable, an RTP computed in closed form and a simulator that exists
+    to check the closed form rather than to replace it. If you want the derivation, it is all in
+    <strong>The Maths</strong>.</p>
+    <div class="tags">
+      <span class="tag2">Probability &amp; combinatorics</span>
+      <span class="tag2">Monte Carlo simulation</span>
+      <span class="tag2">Survival / hazard models</span>
+      <span class="tag2">Python</span><span class="tag2">Java</span><span class="tag2">React</span>
+      <span class="tag2">SQL</span>
+    </div>
+    <a class="golink" href="${CV_URL}" target="_blank" rel="noopener">Download CV →</a>
+    <a class="golink" href="https://linkedin.com/in/karujan-jeyaseelan" target="_blank" rel="noopener">LinkedIn →</a>`;
+}
+
+function toast(sym, title, sub){
+  $('toastIcon').innerHTML = svg(sym);
+  $('toastIcon').querySelector('svg').style.cssText =
+    'width:20px;height:20px;fill:none;stroke:var(--gold);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round';
+  $('toastTitle').textContent = title;
+  $('toastSub').textContent = sub;
+  $('toast').classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => $('toast').classList.remove('show'), 3200);
+}
+
+/* ============================================================================
+   10. WIRING
+   ========================================================================== */
+$('spinBtn').addEventListener('click', () => { setAuto(0); doSpin(false); });
+$('autoBtn').addEventListener('click', () => setAuto(S.auto > 0 ? 0 : 50));
+$('simBtn') .addEventListener('click', () => fastSim(1000000));
+$('btnMath').addEventListener('click', () => openOverlay('ovMath'));
+$('btnProjects').addEventListener('click', () => openOverlay('ovProjects'));
+$('btnAbout').addEventListener('click', () => openOverlay('ovAbout'));
+$('btnCV').href = CV_URL;
+
+document.addEventListener('click', e => {
+  if (e.target.matches('[data-close]')) closeAll();
+  const card = e.target.closest('[data-proj]');
+  if (card){
+    const id = card.dataset.proj;
+    if (card.classList.contains('locked')) toast(id,'Not discovered yet','Land 3+ of this symbol, or open All Projects');
+    else { closeAll(); setTimeout(() => openProject(id), 90); }
+  }
+});
+document.querySelectorAll('.overlay').forEach(o =>
+  o.addEventListener('click', e => { if (e.target === o) closeAll(); }));
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeAll();
+  if (e.code === 'Space' && !document.querySelector('.overlay.open')){
+    e.preventDefault(); setAuto(0); doSpin(false);
+  }
+});
+window.addEventListener('resize', () => { sizeCanvas(); drawChart(); });
+
+/* ---- boot ---- */
+paintStatic(windowFromStops(spinStops()));
+renderChips(); renderPayStrip(); renderProjects(); renderMath(); renderAbout(); refresh(); sizeCanvas();
+$('specLine').textContent =
+  `5 reels · 3 rows · 20 paylines · 20 credits/spin · exact RTP ${pct(THEO.rtp,2)}`;
+$('buildNote').textContent =
+  `Exact RTP ${pct(THEO.rtp,4)} — computed in the browser from the reel strips on load.`;
 </script>
 </body>
 </html>
